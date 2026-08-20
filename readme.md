@@ -293,33 +293,43 @@ Command line to run:
 mvn compile jib:build -X -DjibSerialize=true -Djib.to.auth.username=xxx -Djib.to.auth.password=xxxxx
 ```
 
-## Performance Testing
+## Experimentos e Testes (Testing & Experiments)
 
-To benchmark the scalability of the PetClinic REST API, a JMeter test plan is available.
+Os testes estão organizados no diretório `src/test/` e abrangem diferentes camadas da aplicação:
 
-- See the [JMeter Performance Test](src/test/jmeter/README.md) for details.
-- Run the test using:
+### 1. Testes de Performance com JMeter (`src/test/jmeter/`)
+Para avaliar a escalabilidade da API REST, utilizamos planos de teste no JMeter.
+- **Detalhes**: Veja o [README do JMeter](src/test/jmeter/README.md).
+- **Como executar**:
   ```sh
   jmeter -n -t src/test/jmeter/petclinic-jmeter-crud-benchmark.jmx \
   -Jthreads=100 -Jduration=600 -Jops=2000 -Jramp_time=120 \
   -l results/petclinic-test-results.jtl
+  ```
+- **Resumo do Experimento**: Observou-se a execução de testes (`petclinic_jmeter.jmx`) onde as operações da API foram estressadas para obter métricas de tempo de resposta e vazão em alta concorrência. Relatórios de execução (ex: `resultado_ct05.jtl`) foram gerados em HTML.
 
-## API Testing with Postman + Newman
+### 2. Testes de API com Postman + Newman (`src/test/postman/`)
+Este projeto contém testes de não-regressão construídos no Postman e executados via Newman.
+- **Detalhes**: Veja o [README do Postman](src/test/postman/README.md).
+- **Como executar**:
+  ```sh
+  chmod +x postman-tests.sh
+  ./postman-tests.sh
+  ```
 
-This project contains **non-regression tests** for the Petclinic API, built with **Postman** and executed via **Newman**, with automated **HTML reports** for easy analysis.
+### 3. Testes de Carga com Gatling (`src/test/gatling/`)
+Outra ferramenta de injeção de carga incluída no projeto.
+- **Como executar**:
+  ```sh
+  mvn gatling:test
+  ```
 
-- See the [Postman + Newman Test](src/test/postman/README.md) for details.
-- You can run the tests with 2 ways:
-  I. Giving Execution Permission to the script file:
-    ```sh
-    chmod +x postman-tests.sh
-    ./postman-tests.sh
-    ```
-  II. Without Permission to the script file:
-    ```sh
-    zsh postman-tests.sh
-    ```
-> Note: You can use your currently bash installed. Like: "bash postman-tests.sh"
+### 4. Testes Unitários e de Integração (Java)
+Testes automatizados base (JUnit/Mockito).
+- **Como executar**:
+  ```sh
+  ./mvnw test
+  ```
 
 ## Interesting Spring Petclinic forks
 
